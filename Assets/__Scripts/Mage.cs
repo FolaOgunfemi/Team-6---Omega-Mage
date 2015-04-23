@@ -186,5 +186,5 @@ public class Mage : PT_MonoBehaviour {
 		//The mouse is released after being drug
 		if (DEBUG) print("Mage.MouseDragUp()");
 	}
-
+///////////[Fola] Just testing "Create a New Branch" option //////////////////
 }
