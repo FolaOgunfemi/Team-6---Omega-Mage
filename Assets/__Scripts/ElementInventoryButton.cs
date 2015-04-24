@@ -14,6 +14,6 @@ public class ElementInventoryButton : MonoBehaviour {
 	}
 	void OnMouseUpAsButton() {
 		// Tell the Mage to add this element type
-		//Mage.S.SelectElement(type);
+		Mage.S.SelectElement(type);
 	}
 }
