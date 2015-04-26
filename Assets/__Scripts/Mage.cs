@@ -75,7 +75,11 @@ public class Mage : PT_MonoBehaviour {
 	public float lineMaxDelta = 0.5f;
 	public float lineMaxLength = 8f;
 
+	public GameObject fireGroundSpellPrefab;
+
 	public bool ____________________;
+
+	protected Transform spellAnchor;  //The parent transform for all spells
 
 	public float totalLineLength;
 	public List<Vector3> linePts; // Points to be shown in the line
@@ -110,6 +114,10 @@ public class Mage : PT_MonoBehaviour {
 		liner = GetComponent<LineRenderer>();
 		liner.enabled = false;
 
+		GameObject saGO = new GameObject("Spell Anchor");
+		//^Create an empty GameObject names "Spell Anchor".  When you create a 
+		// new GameObject this way, it's at P:[0,0,0] R:[0,0,0] S:[1,1,1]
+		spellAnchor = saGO.transform;  //Get its transform
 	}
 
 	void Update()
@@ -297,10 +305,36 @@ public class Mage : PT_MonoBehaviour {
 			// Stop walking when the drag is stopped
 			StopWalking();
 		}else {
-			//TODO: Cast the Spell
+			CastGroundSpell();
 			// Clear the liner
 			ClearLiner();
 		}
+	}
+
+	void CastGroundSpell()
+	{
+		//There is not a no-element ground spell, so return
+		if (selectedElements.Count == 0) return;
+
+		//Because this version of the prototype only allows a single element to
+		//be selected, we can use that 0th element to pick the spell
+		switch (selectedElements[0].type)
+		{
+		case ElementType.fire:
+			GameObject fireGO;
+			foreach(Vector3 pt in linePts)  //For each Vector3 in linePts...
+			{
+				//...create an instance of fireGorundSpellPrefab
+				fireGO = Instantiate(fireGroundSpellPrefab) as GameObject;
+				fireGO.transform.parent = spellAnchor;
+				fireGO.transform.position = pt;
+			}
+			break;
+		//TODO: Add other elements
+		}
+
+		//Clear the selectedElements; they're consumed by the spell
+		ClearElements();
 	}
 
 	// Walk to a specific position. The position.z is always 0
@@ -481,6 +515,12 @@ public class Mage : PT_MonoBehaviour {
 	public void ClearLiner() {
 		liner.enabled = false; // Disable the LineRenderer
 		linePts.Clear(); // and clear all linePts
+	}
+
+	//Stop any active drag or other mouse inpup
+	public void ClearInput()
+	{
+		mPhase = MPhase.idle;
 	}
 
 }  //End class body

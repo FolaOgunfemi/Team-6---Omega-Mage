@@ -2,7 +2,11 @@ fileFormatVersion: 2
 guid: 36041e028b72b4c23b9038e308695a99
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - tapIndicatorPrefab: {instanceID: 0}
+  - fireGroundSpellPrefab: {fileID: 100000, guid: 1bddc976e84cc4c52b55874a26454b75,
+      type: 2}
+  - characterTrans: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
