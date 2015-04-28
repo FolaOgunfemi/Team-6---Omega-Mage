@@ -5,16 +5,39 @@ using System.Collections.Generic;
 public class EnemyBug : PT_MonoBehaviour {
 
 	public float speed = 0.5f;
+	public float health = 10;
 
 	public bool _______________________;
 
+	private float _maxHealth;
 	public Vector3 walkTarget;
 	public bool walking;
 	public Transform characterTrans;
+	//Stores damage for each element each frame
+	public Dictionary<ElementType,float> damageDict;
+	//^NOTE: Dictionaries do not appear in the Unity Inspector
 
 	void Awake()
 	{
 		characterTrans = transform.Find("CharacterTrans");
+		_maxHealth = health;  //Used to put a top cap on healing
+		ResetDamageDict ();
+	}
+
+	//Resets the values for the damageDict
+	void ResetDamageDict()
+	{
+		if (damageDict == null)
+		{
+			damageDict = new Dictionary<ElementType, float>();
+		}
+		damageDict.Clear ();
+		damageDict.Add(ElementType.earth,0);
+		damageDict.Add(ElementType.water,0);
+		damageDict.Add(ElementType.air,0);
+		damageDict.Add(ElementType.fire,0);
+		damageDict.Add(ElementType.aether,0);
+		damageDict.Add(ElementType.none,0);
 	}
 
 	void Update()
@@ -67,6 +90,66 @@ public class EnemyBug : PT_MonoBehaviour {
 			//If not walking, velocity should be zero
 			rigidbody.velocity = Vector3.zero;
 		}
+	}
+
+	//Damage this instance. By Default, the damage is instant, but it can also
+	// be treated as damage over time, where the amt value would ne the ammount
+	// of damage done every second.
+	//Note: This same code can be used to heal the instance
+	public void Damage (float amt, ElementType eT, bool damageOverTime=false)
+	{
+		//If it's a DOT, then only damage the fractional amount for this frame
+		if (damageOverTime)
+		{
+			amt *= Time.deltaTime;
+		}
+
+		//Treat different damage types differently (most are default)
+		switch(eT)
+		{
+		case ElementType.fire:
+			//Only the max damage from one fire source affects this instance
+			damageDict[eT] = Mathf.Max(amt, damageDict[eT]);
+			break;
+		case ElementType.air:
+			//air doesn't damage EnemyBugs, so do nothing
+			break;
+		default:
+			//By default, damage is added to the other damage by same element
+			damageDict[eT] += amt;
+			break;
+		}
+	}
+
+	//LateUpdate() is automatically called by Unity everyFrame.  Once all the 
+	// Updates() on all instances have been called, then LateUpdate() is called
+	// on all instances.
+	void LateUpdate()
+	{
+		//Apply damage from the different element types
+
+		//Iteration through a Dictionary uses a KeyValuePair
+		// entry.Key is the ElementType, while entry.Value is the float
+		float dmg = 0;
+		foreach (KeyValuePair<ElementType,float> entry in damageDict)
+		{
+			dmg += entry.Value;
+		}
+
+		health -= dmg;
+		health = Mathf.Min(_maxHealth, health);  //Limit health if healing
+		
+		if (health <= 0)
+		{
+			Die();
+		}
+	}
+
+	//Making Die()  a seperate function allows us to add things later like
+	// different death animations, dropping something for the player, etc.
+	public void Die()
+	{
+		Destroy (gameObject);
 	}
 
 }
