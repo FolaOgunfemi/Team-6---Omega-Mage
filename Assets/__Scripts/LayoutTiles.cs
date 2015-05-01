@@ -10,6 +10,13 @@ public class TileTex
 	public Texture2D tex;
 }
 
+[System.Serializable]
+public class EnemyDef {
+	// This class enables us to define various enemies
+	public string str;
+	public GameObject go;
+}
+
 public class LayoutTiles : MonoBehaviour {
 
 	static public LayoutTiles S;
@@ -20,6 +27,7 @@ public class LayoutTiles : MonoBehaviour {
 	public GameObject tilePrefab;  //Prefab for all tiles
 	public TileTex[] tileTextures;  //A list of named textures for Tiles
 	public GameObject portalPrefab;  //Prefab for the portals between rooms
+	public EnemyDef[] enemyDefinitions; // Prefabs for Enemies
 
 	public bool ___________________;
 
@@ -245,6 +253,18 @@ public class LayoutTiles : MonoBehaviour {
 					p.toRoom = rawType;
 					portals.Add(p);
 					break;
+
+				default:
+					// Try to see if there's an Enemy for that letter
+					Enemy en = EnemyFactory(rawType);
+					if (en == null) break; // If there's not one, break out
+					// Set up the new Enemy
+					en.pos = ti.pos;
+					// Make en a child of tileAnchor so it's deleted when the
+					// next room is loaded.
+					en.transform.parent = tileAnchor;
+					en.typeString = rawType;
+					break;
 				}
 
 				//More to come here...
@@ -275,9 +295,32 @@ public class LayoutTiles : MonoBehaviour {
 			}
 		}
 
+//////pg 718 content may belong here
+
 		//Finally assign the roomNumber
 		roomNumber = rNumStr;
 
 	}
 
+///////pg718
+	public Enemy EnemyFactory(string sType) {
+		// See if there's an EnemyDef with that sType
+		GameObject prefab = null;
+		foreach (EnemyDef ed in enemyDefinitions) {
+			if (ed.str == sType) {
+				prefab = ed.go;
+				break;
+			}
+		}
+		if (prefab == null) {
+			Utils.tr("LayoutTiles.EnemyFactory()","No EnemyDef for: "+sType);
+			return(null);
+		}
+		GameObject go = Instantiate(prefab) as GameObject;
+		// The generic form of GetComponent (with the <>) won't work for
+		// interfaces like Enemy, so we must use this form instead.
+		Enemy en = (Enemy) go.GetComponent(typeof(Enemy));
+		return(en);
+	}
+	////////end pg 718 public enemy factory
 }

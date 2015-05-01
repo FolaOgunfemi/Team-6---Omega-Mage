@@ -432,11 +432,23 @@ public class Mage : PT_MonoBehaviour {
 		}
 		//See if it's an EnemyBug
 		EnemyBug bug = coll.gameObject.GetComponent<EnemyBug> ();
-		//If otherGO is an EnemyBug, pass otherGO to CollisionDamage()
-		if (bug != null) CollisionDamage (otherGO);
+		// If otherGO is an EnemyBug, pass bug to CollisionDamage(), which will
+		// interpret it as an Enemy
+		if (bug != null) CollisionDamage(bug);
+		// if (bug != null) CollisionDamage(otherGO); // COMMENT OUT THIS LINE!
 	} // end OnCollisionEnter
+////////page 713
 
-	void CollisionDamage (GameObject enemy)
+	void OnTriggerEnter(Collider other) {
+		EnemySpiker spiker = other.GetComponent<EnemySpiker>();
+		if (spiker != null) {
+			// CollisionDamage() will see spiker as an Enemy
+			CollisionDamage(spiker);
+			// CollisionDamage(other.gameObject); // COMMENT OUT THIS LINE!
+		}
+	}
+
+	void CollisionDamage (Enemy enemy)
 	{
 		//Don't take damage if you're already invincible
 		if (invincibleBool) return;
@@ -444,7 +456,8 @@ public class Mage : PT_MonoBehaviour {
 		//The mage has been hit by an enemy
 		StopWalking ();
 		ClearInput();
-		health -= 1;  //Take 1 point of damage (for now)
+
+		health -= enemy.touchDamage; // Take damage based on Enemy
 		if (health <= 0)
 		{
 			Die();
@@ -453,7 +466,7 @@ public class Mage : PT_MonoBehaviour {
 
 		damageTime = Time.time;
 		knockbackBool = true;
-		knockbackDir = (pos - enemy.transform.position).normalized;
+		knockbackDir = (pos - enemy.pos).normalized;
 		invincibleBool = true;
 	}
 
@@ -592,6 +605,7 @@ public class Mage : PT_MonoBehaviour {
 		liner.enabled = false; // Disable the LineRenderer
 		linePts.Clear(); // and clear all linePts
 	}
+
 
 	//Stop any active drag or other mouse inpup
 	public void ClearInput()
