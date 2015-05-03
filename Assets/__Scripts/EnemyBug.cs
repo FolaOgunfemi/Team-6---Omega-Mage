@@ -32,6 +32,11 @@ public class EnemyBug : PT_MonoBehaviour, Enemy {
 	public Dictionary<ElementType,float> damageDict;
 	//^NOTE: Dictionaries do not appear in the Unity Inspector
 
+	///////////This is the part that plays the sound effect!!!!!!!!!!!
+	public AudioClip hurt;
+	float nextSoundTime=0;
+	///////////This is the part that plays the sound effect!!!!!!!!!!!
+
 	void Awake()
 	{
 		characterTrans = transform.Find("CharacterTrans");
@@ -158,6 +163,16 @@ public class EnemyBug : PT_MonoBehaviour, Enemy {
 			{
 				//Start the damage scale animation
 				damageScaleStartTime = Time.time;
+				///////////This is the part that plays the sound effect!!!!!!!!!!!
+				//audio.clip = hurt;
+				//audio.Play ();
+				if(Time.time>=nextSoundTime) 
+				{
+					audio.PlayOneShot(hurt);
+					// write down when we will be finished:
+					nextSoundTime = Time.time + hurt.length;
+				}
+				///////////This is the part that plays the sound effect!!!!!!!!!!!
 			}
 		}
 
