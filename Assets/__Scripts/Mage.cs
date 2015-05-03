@@ -116,6 +116,10 @@ public class Mage : PT_MonoBehaviour {
 
 	public List<Element> selectedElements = new List<Element>();
 
+	///////////This is the part that plays the sound effect!!!!!!!!!!!
+	public AudioClip hurt;
+	///////////This is the part that plays the sound effect!!!!!!!!!!!
+
 	void Awake()
 	{
 		S = this;  //Set the Mage singleton
@@ -468,6 +472,11 @@ public class Mage : PT_MonoBehaviour {
 		knockbackBool = true;
 		knockbackDir = (pos - enemy.pos).normalized;
 		invincibleBool = true;
+
+		///////////This is the part that plays the sound effect!!!!!!!!!!!
+		audio.clip = hurt;
+		audio.Play ();
+		///////////This is the part that plays the sound effect!!!!!!!!!!!
 	}
 
 	//The mage dies
