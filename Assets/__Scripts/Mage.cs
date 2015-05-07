@@ -76,6 +76,9 @@ public class Mage : PT_MonoBehaviour {
 	public float lineMaxLength = 8f;
 
 	public GameObject fireGroundSpellPrefab;
+	public GameObject lifeGroundSpellPrefab;
+	public GameObject iceGroundSpellPrefab;
+	public GameObject windGroundSpellPrefab;
 
 	public float health = 4;  //Total mage health
 	public float damageTime = -100;
@@ -349,7 +352,41 @@ public class Mage : PT_MonoBehaviour {
 				fireGO.transform.position = pt;
 			}
 			break;
-		//TODO: Add other elements
+/////////////////////////////////////////////////////////////////////////Adding new elemental spells
+		
+		case ElementType.water:
+			GameObject waterGO;
+			foreach(Vector3 pt in linePts)  //For each Vector3 in linePts...
+			{
+				//...create an instance of iceGorundSpellPrefab
+				waterGO = Instantiate(iceGroundSpellPrefab) as GameObject;
+				waterGO.transform.parent = spellAnchor;
+				waterGO.transform.position = pt;
+			}
+			break;
+
+		case ElementType.air:
+			GameObject airGO;
+			foreach(Vector3 pt in linePts)  //For each Vector3 in linePts...
+			{
+				//...create an instance of windGroundSpellPrefab
+				airGO = Instantiate(windGroundSpellPrefab) as GameObject;
+				airGO.transform.parent = spellAnchor;
+				airGO.transform.position = pt;
+			}
+			break;
+
+		case ElementType.earth:
+			GameObject earthGO;
+			foreach(Vector3 pt in linePts)  //For each Vector3 in linePts...
+			{
+				//...create an instance of lifeGorundSpellPrefab
+				earthGO = Instantiate(lifeGroundSpellPrefab) as GameObject;
+				earthGO.transform.parent = spellAnchor;
+				earthGO.transform.position = pt;
+			}
+			break;
+/////////////////////////////////////////////////////////////////////////Adding new elemental spells
 		}
 
 		//Clear the selectedElements; they're consumed by the spell
