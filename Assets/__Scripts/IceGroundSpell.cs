@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections;
 
 //Extends PT_Monobehaviour
-public class IceGroundSpell : PT_MonoBehaviour
+public class FireGroundSpell : PT_MonoBehaviour
 {
-	public float duration = 8;  //Lifetime of this GameObject
-	public float durationVariance = 1f;
-	// ^ This allows the duration to range from 7 to 9
-	public float fadeTime = 2f;  //Length of time to fade
+	public float duration = 4;  //Lifetime of this GameObject
+	public float durationVariance = 0.5f;
+	// ^ This allows the duration to range from 3.5 to 4.5
+	public float fadeTime = 1f;  //Length of time to fade
 	public float timeStart;  //Birth time of this GameObject
-	public float damagePerSecond = 7;
+	public float damagePerSecond = 10;
 	
 	//Use this for initialization
 	void Start ()
@@ -27,11 +27,11 @@ public class IceGroundSpell : PT_MonoBehaviour
 		float u = (Time.time-timeStart)/duration;
 		
 		//At what u value should this start fading
-		float fadePercent = 1 -(fadeTime/duration);
+		float fadePercent = 1-(fadeTime/duration);
 		if (u>fadePercent)  //IF it's after the time to start fading...
 		{
 			//...then sink into the ground
-			float u2 = (u-fadePercent)/(1 -fadePercent);
+			float u2 = (u-fadePercent)/(1-fadePercent);
 			//^u2 is a number [0..1] for just the fadeTime
 			Vector3 loc = pos;
 			loc.z = u2*2;  //move lower over time
@@ -52,7 +52,7 @@ public class IceGroundSpell : PT_MonoBehaviour
 		{
 			go = other.gameObject;
 		}
-		Utils.tr("Ice hit",go.name);
+		Utils.tr("Flame hit",go.name);
 	}
 	
 	void OnTriggerStay(Collider other)
@@ -60,10 +60,10 @@ public class IceGroundSpell : PT_MonoBehaviour
 		//Actually damage the other
 		//Get a refrence to the EnemyBug script component of the other
 		EnemyBug recipient = other.GetComponent<EnemyBug> ();
-		//If there is an enemyBug component, damage it with water
+		//If there is an enemyBug component, dmage it with fire
 		if (recipient != null)
 		{
-			recipient.Damage(damagePerSecond, ElementType.water, true);
+			recipient.Damage(damagePerSecond, ElementType.fire, true);
 		}
 	}
 

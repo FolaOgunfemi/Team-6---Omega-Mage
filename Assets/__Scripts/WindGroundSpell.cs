@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections;
 
 //Extends PT_Monobehaviour
-public class WindGroundSpell : PT_MonoBehaviour
+public class FireGroundSpell : PT_MonoBehaviour
 {
-	public float duration = 3;  //Lifetime of this GameObject
+	public float duration = 4;  //Lifetime of this GameObject
 	public float durationVariance = 0.5f;
-	// ^ This allows the duration to range from 2.5 to 3.5
-	public float fadeTime = 0.5f;  //Length of time to fade
+	// ^ This allows the duration to range from 3.5 to 4.5
+	public float fadeTime = 1f;  //Length of time to fade
 	public float timeStart;  //Birth time of this GameObject
-	public float damagePerSecond = 15;
+	public float damagePerSecond = 10;
 	
 	//Use this for initialization
 	void Start ()
@@ -27,7 +27,7 @@ public class WindGroundSpell : PT_MonoBehaviour
 		float u = (Time.time-timeStart)/duration;
 		
 		//At what u value should this start fading
-		float fadePercent = 1 -(fadeTime/duration);
+		float fadePercent = 1-(fadeTime/duration);
 		if (u>fadePercent)  //IF it's after the time to start fading...
 		{
 			//...then sink into the ground
@@ -52,7 +52,7 @@ public class WindGroundSpell : PT_MonoBehaviour
 		{
 			go = other.gameObject;
 		}
-		Utils.tr("Wind hit",go.name);
+		Utils.tr("Flame hit",go.name);
 	}
 	
 	void OnTriggerStay(Collider other)
@@ -60,10 +60,10 @@ public class WindGroundSpell : PT_MonoBehaviour
 		//Actually damage the other
 		//Get a refrence to the EnemyBug script component of the other
 		EnemyBug recipient = other.GetComponent<EnemyBug> ();
-		//If there is an enemyBug component, dmage it with air
+		//If there is an enemyBug component, dmage it with fire
 		if (recipient != null)
 		{
-			recipient.Damage(damagePerSecond, ElementType.air, true);
+			recipient.Damage(damagePerSecond, ElementType.fire, true);
 		}
 	}
 
